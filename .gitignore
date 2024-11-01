@@ -33,3 +33,9 @@ ENV/
 .cache/
 output/
 logs/
+
+test.md
+*.~
+.*~
+*.old.secrets
+.secrets
