@@ -8,6 +8,8 @@ on:
 jobs:
   update-stargazers:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v2
       
@@ -27,13 +29,24 @@ jobs:
               html_url: user.html_url
             }));
             
-            const fs = require('fs');
-            const path = require('path');
-            
             const content = `# ⭐ Stargazers\n\nThanks to all our stargazers! ✨\n\n${
               stargazersList.map(user => (
                 `[![${user.login}](${user.avatar_url}&s=64)](${user.html_url})`
               )).join(' ')
             }\n\nLast updated: ${new Date().toISOString().split('T')[0]}\n`;
             
-            fs.writeFileSync('STARGAZERS.md', content);
+            await github.rest.repos.createOrUpdateFileContents({
+              owner,
+              repo,
+              path: 'STARGAZERS.md',
+              message: 'Update Stargazers list',
+              content: Buffer.from(content).toString('base64'),
+              committer: {
+                name: 'GitHub Action',
+                email: 'action@github.com'
+              },
+              author: {
+                name: 'GitHub Action',
+                email: 'action@github.com'
+              }
+            });
