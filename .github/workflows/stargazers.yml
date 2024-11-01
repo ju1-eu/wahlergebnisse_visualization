@@ -2,7 +2,7 @@ name: Update Stargazers
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # Täglich um Mitternacht (5 Sterne!)
+    - cron: "0 0 * * *"  # Korrekte Syntax: Minuten Stunden TagDesMonats Monat TagDerWoche
   workflow_dispatch:
 
 jobs:
@@ -12,68 +12,88 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Update Stargazers list
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const fs = require('fs').promises;
-            
             try {
-              // Get stargazers
               const { data: stargazers } = await github.rest.activity.listStargazersForRepo({
                 owner: context.repo.owner,
-                repo: context.repo.repo,
+                repo: context.repo.repo
               });
-              
-              // Create content
-              const content = `# ⭐ Stargazers\n\nThanks to all our stargazers! ✨\n\n${
+
+              const date = new Date().toLocaleString('de-DE', {
+                timeZone: 'Europe/Berlin',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+
+              const content = `# ⭐ Stargazers\n
+## Wahlergebnisse Visualization
+[![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://www.apple.com/macos)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)\n
+Thanks to all our stargazers! ✨\n\n${
                 stargazers.map(user => 
                   `[![${user.login}](${user.avatar_url}&s=64)](${user.html_url})`
                 ).join(' ')
-              }\n\nLast updated: ${new Date().toISOString()}\n`;
-              
-              // Try to get existing file
-              let sha;
+              }\n\nLast updated: ${date} (Europe/Berlin)\n`;
+
               try {
-                const { data } = await github.rest.repos.getContent({
+                // Versuche zuerst die aktuelle Datei zu holen
+                const { data: currentFile } = await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: 'STARGAZERS.md'
+                });
+
+                // Update mit SHA
+                await github.rest.repos.createOrUpdateFileContents({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   path: 'STARGAZERS.md',
-                  ref: context.sha
+                  message: `Update Stargazers list [${date}]`,
+                  content: Buffer.from(content).toString('base64'),
+                  sha: currentFile.sha,
+                  committer: {
+                    name: 'GitHub Action',
+                    email: 'action@github.com'
+                  }
                 });
-                sha = data.sha;
-                console.log('Found existing file with SHA:', sha);
-              } catch (e) {
-                console.log('No existing file found, creating new one');
-              }
-              
-              // Create/update file
-              const updateData = {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                path: 'STARGAZERS.md',
-                message: 'Update Stargazers list',
-                content: Buffer.from(content).toString('base64'),
-                committer: {
-                  name: 'GitHub Action',
-                  email: 'action@github.com'
+              } catch (error) {
+                if (error.status === 404) {
+                  // Datei existiert nicht, erstelle sie neu
+                  await github.rest.repos.createOrUpdateFileContents({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    path: 'STARGAZERS.md',
+                    message: `Create Stargazers list [${date}]`,
+                    content: Buffer.from(content).toString('base64'),
+                    committer: {
+                      name: 'GitHub Action',
+                      email: 'action@github.com'
+                    }
+                  });
+                } else {
+                  throw error;
                 }
-              };
-              
-              // Add SHA if file exists
-              if (sha) {
-                updateData.sha = sha;
               }
-              
-              await github.rest.repos.createOrUpdateFileContents(updateData);
+
               console.log('Successfully updated STARGAZERS.md');
-              
             } catch (error) {
-              console.error('Error:', error);
+              console.error('Error:', error.message);
               core.setFailed(error.message);
             }
