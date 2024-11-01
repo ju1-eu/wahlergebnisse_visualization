@@ -2,112 +2,78 @@ name: Update Stargazers
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # Täglich um Mitternacht
+    - cron: "0 0 * * *"  # Täglich um Mitternacht (5 Sterne!)
   workflow_dispatch:
 
 jobs:
   update-stargazers:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
       
       - name: Update Stargazers list
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const fs = require('fs').promises;
+            
             try {
+              // Get stargazers
               const { data: stargazers } = await github.rest.activity.listStargazersForRepo({
                 owner: context.repo.owner,
-                repo: context.repo.repo
+                repo: context.repo.repo,
               });
               
-              const stargazersList = stargazers.map(user => ({
-                login: user.login,
-                avatar_url: user.avatar_url,
-                html_url: user.html_url
-              }));
-              
-              const date = new Date().toLocaleString('de-DE', { 
-                timeZone: 'Europe/Berlin',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-              });
-              
-              const content = `# ⭐ Stargazers\n
-## Wahlergebnisse Visualization
-[![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)](https://www.apple.com/macos)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-
-Thanks to all our stargazers! ✨\n\n${
-                stargazersList.map(user => (
+              // Create content
+              const content = `# ⭐ Stargazers\n\nThanks to all our stargazers! ✨\n\n${
+                stargazers.map(user => 
                   `[![${user.login}](${user.avatar_url}&s=64)](${user.html_url})`
-                )).join(' ')
-              }\n\nLast updated: ${date} (Europe/Berlin)\n`;
+                ).join(' ')
+              }\n\nLast updated: ${new Date().toISOString()}\n`;
               
+              // Try to get existing file
+              let sha;
               try {
-                // Get the current file to get its SHA
-                const { data: currentFile } = await github.rest.repos.getContent({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  path: 'STARGAZERS.md'
-                });
-
-                // Update the file
-                await github.rest.repos.createOrUpdateFileContents({
+                const { data } = await github.rest.repos.getContent({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   path: 'STARGAZERS.md',
-                  message: `Update Stargazers list (${date})`,
-                  content: Buffer.from(content).toString('base64'),
-                  sha: currentFile.sha,
-                  committer: {
-                    name: 'GitHub Action',
-                    email: 'action@github.com'
-                  },
-                  author: {
-                    name: 'GitHub Action',
-                    email: 'action@github.com'
-                  }
+                  ref: context.sha
                 });
-                
-                console.log('Successfully updated stargazers list');
-              } catch (error) {
-                if (error.status === 404) {
-                  // File doesn't exist yet, create it
-                  await github.rest.repos.createOrUpdateFileContents({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    path: 'STARGAZERS.md',
-                    message: `Create Stargazers list (${date})`,
-                    content: Buffer.from(content).toString('base64'),
-                    committer: {
-                      name: 'GitHub Action',
-                      email: 'action@github.com'
-                    },
-                    author: {
-                      name: 'GitHub Action',
-                      email: 'action@github.com'
-                    }
-                  });
-                  console.log('Successfully created stargazers list');
-                } else {
-                  throw error;
-                }
+                sha = data.sha;
+                console.log('Found existing file with SHA:', sha);
+              } catch (e) {
+                console.log('No existing file found, creating new one');
               }
+              
+              // Create/update file
+              const updateData = {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: 'STARGAZERS.md',
+                message: 'Update Stargazers list',
+                content: Buffer.from(content).toString('base64'),
+                committer: {
+                  name: 'GitHub Action',
+                  email: 'action@github.com'
+                }
+              };
+              
+              // Add SHA if file exists
+              if (sha) {
+                updateData.sha = sha;
+              }
+              
+              await github.rest.repos.createOrUpdateFileContents(updateData);
+              console.log('Successfully updated STARGAZERS.md');
+              
             } catch (error) {
-              console.error('Error updating stargazers list:', error);
-              process.exit(1);
+              console.error('Error:', error);
+              core.setFailed(error.message);
             }
