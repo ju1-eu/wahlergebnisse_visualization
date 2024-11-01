@@ -1,0 +1,39 @@
+name: Update Stargazers
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Täglich um Mitternacht
+  workflow_dispatch:
+
+jobs:
+  update-stargazers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Update Stargazers list
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+            const stargazers = await github.paginate(
+              github.rest.activity.listStargazersForRepo,
+              { owner, repo }
+            );
+            
+            const stargazersList = stargazers.map(user => ({
+              login: user.login,
+              avatar_url: user.avatar_url,
+              html_url: user.html_url
+            }));
+            
+            const fs = require('fs');
+            const path = require('path');
+            
+            const content = `# ⭐ Stargazers\n\nThanks to all our stargazers! ✨\n\n${
+              stargazersList.map(user => (
+                `[![${user.login}](${user.avatar_url}&s=64)](${user.html_url})`
+              )).join(' ')
+            }\n\nLast updated: ${new Date().toISOString().split('T')[0]}\n`;
+            
+            fs.writeFileSync('STARGAZERS.md', content);
