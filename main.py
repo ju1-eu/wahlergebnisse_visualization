@@ -1,5 +1,4 @@
-"""
-US-Wahlergebnisse Visualisierung 2024
+"""US-Wahlergebnisse Visualisierung 2024
 ------------------------------------
 Dieses Skript visualisiert die Wahlergebnisse der US-Wahl 2024 für Harris und Trump.
 Es bietet eine interaktive Darstellung mit Skalierungsmöglichkeit und automatischem Export.
@@ -95,7 +94,7 @@ class ElectionVisualizationApp:
         export_config = ExportConfig(OUTPUT_DIR=str(self.dirs['exports']))
         cache_config = CacheConfig(
             CACHE_DIR=str(self.dirs['cache']),
-            CACHE_ENABLED=not self.args.no_cache
+            CACHE_ENABLED=not self.args.no_cache  # Jetzt in der CacheConfig-Klasse definiert
         )
         
         with timer("Gesamtausführung"):

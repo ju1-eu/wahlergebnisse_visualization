@@ -1,0 +1,22 @@
+US-Wahlergebnisse 2024 nach Bundesstaaten:
+
+California: Harris 59000, Trump 35000
+Massachusetts: Harris 59000, Trump 36000
+Colorado: Harris 52000, Trump 45000
+Virginia: Harris 51000, Trump 46000
+New Hampshire: Harris 48000, Trump 47000
+New Mexico: Harris 47000, Trump 46000
+Connecticut: Harris 46000, Trump 42000
+Maryland: Harris 45000, Trump 35000
+Rhode Island: Harris 44000, Trump 38000
+Hawaii: Harris 42000, Trump 32000
+
+Indiana: Harris 40000, Trump 57000
+South Dakota: Harris 35000, Trump 62000
+Idaho: Harris 34000, Trump 58000
+North Dakota: Harris 33000, Trump 59000
+Missouri: Harris 38000, Trump 56000
+Utah: Harris 36000, Trump 54000
+Alaska: Harris 35000, Trump 52000
+Arkansas: Harris 34000, Trump 58000
+Wyoming: Harris 32000, Trump 65000

@@ -1,7 +1,5 @@
-"""
-Kernabhängigkeiten für das Wahlergebnisse-Visualisierungsprojekt.
-Installation: pip install -r requirements.txt
-"""
+# Kernabhängigkeiten für das Wahlergebnisse-Visualisierungsprojekt.
+# Installation: pip install -r requirements.txt
 
 # Kernabhängigkeiten
 pandas

@@ -44,6 +44,25 @@ Interaktive Visualisierung der US-Wahlergebnisse 2024 mit erweiterten Analyse- u
    ```bash
    git clone https://github.com/ju1-eu/wahlergebnisse_visualization.git
    cd wahlergebnisse_visualization
+
+   # Workflow-Datei aktualisieren
+   vim .github/workflows/stargazers.yml
+   # Prüfen
+   yamllint .github/workflows/stargazers.yml
+
+   # Lokalen Test durchführen
+   act -j update-stargazers --secret-file .secrets
+
+   # Änderungen prüfen
+   git diff .github/workflows/stargazers.yml
+
+   # Änderungen committen
+   git add .
+   git commit -m ""
+
+   # Änderungen pushen
+   git pull --rebase origin main
+   git push origin main
    ```
 
 2. **Virtuelle Umgebung einrichten**
@@ -63,7 +82,8 @@ Interaktive Visualisierung der US-Wahlergebnisse 2024 mit erweiterten Analyse- u
    pip install -r requirements.txt
 
    # Entwicklungs-Installation
-   pip install -r dev-requirements.txt
+   pip install -r dev-requirements.txt --no pydantic --no pydantic-core
+
 
    # Installation mit Entwicklerwerkzeugen
    pip install -e ".[dev]"

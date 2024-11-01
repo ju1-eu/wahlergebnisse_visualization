@@ -1,7 +1,9 @@
 """
 Modul zur Verarbeitung der Wahlergebnisdaten.
 """
+
 import pandas as pd
+import numpy as np  # Hinzugefügt, um die Nutzung von 'np' zu ermöglichen
 import re
 import logging
 import pickle

@@ -1,8 +1,6 @@
-"""
-Entwicklungsabhängigkeiten.
-Installation: pip install -r dev-requirements.txt
-"""
--r requirements.txt
+# Entwicklungsabhängigkeiten.
+# Installation: pip install -r dev-requirements.txt --no pydantic --no pydantic-core
+
 
 # Dokumentation
 sphinx

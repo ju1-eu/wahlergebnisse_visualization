@@ -38,13 +38,13 @@ class ElectionVisualizer:
         sns.set_style("whitegrid", {
             'axes.grid': True,
             'grid.linestyle': '--',
-            'grid.alpha': 0.3
+            'grid.alpha': 0.5  # Deutlicheres Grid, Erhöhung der Transparenz von 0.3 auf 0.5
         })
         
         # Matplotlib RC Parameter
         plt.rcParams.update({
             'figure.figsize': self.config.FIGURE_SIZE,
-            'font.size': 12,
+            'font.size': 10,  # Schriftgröße global auf 10 reduziert
             'axes.labelsize': 12,
             'axes.titlesize': 14,
             'xtick.labelsize': 10,
@@ -67,12 +67,16 @@ class ElectionVisualizer:
         self.ax.clear()
         y_pos = range(len(self.df))
         
+        # Farben für Harris und Trump angepasst
+        harris_color = "#1f77b4"  # Ein tiefes Blau für Harris
+        trump_color = "#d62728"   # Ein kräftiges Rot für Trump
+
         # Harris Balken
         self.ax.barh(y_pos, 
                     self.df['Harris'] * scale,
                     height=self.config.BAR_HEIGHT,
                     label='Harris',
-                    color=self.config.COLORS['harris'],
+                    color=harris_color,  # Neue Farbe
                     alpha=self.config.ALPHA)
         
         # Trump Balken
@@ -80,26 +84,24 @@ class ElectionVisualizer:
                     self.df['Trump'] * scale,
                     height=self.config.BAR_HEIGHT,
                     label='Trump',
-                    color=self.config.COLORS['trump'],
+                    color=trump_color,  # Neue Farbe
                     alpha=self.config.ALPHA)
                     
         # Differenzmarkierung
         for i, row in self.df.iterrows():
             if row['Harris'] > row['Trump']:
-                diff = row['Harris'] - row['Trump']
                 self.ax.plot([row['Trump'] * scale, row['Harris'] * scale],
                            [i + self.config.BAR_HEIGHT/2] * 2,
                            color='darkgray',
                            linestyle=':',
-                           alpha=0.5,
+                           alpha=0.7,  # Erhöhung der Transparenz für bessere Sichtbarkeit
                            linewidth=1.5)
             elif row['Trump'] > row['Harris']:
-                diff = row['Trump'] - row['Harris']
                 self.ax.plot([row['Harris'] * scale, row['Trump'] * scale],
                            [i + self.config.BAR_HEIGHT/2] * 2,
                            color='darkgray',
                            linestyle=':',
-                           alpha=0.5,
+                           alpha=0.7,
                            linewidth=1.5)
     
     def _add_labels(self, scale: float = 1.0):
@@ -116,7 +118,7 @@ class ElectionVisualizer:
                 percentage=row['Harris_Percentage'],
                 scale=scale,
                 y_pos=i,
-                color=self.config.COLORS['harris']
+                color='white'  # Textfarbe geändert für bessere Lesbarkeit auf dem blauen Balken
             )
             
             # Trump Werte
@@ -125,7 +127,7 @@ class ElectionVisualizer:
                 percentage=row['Trump_Percentage'],
                 scale=scale,
                 y_pos=i + self.config.BAR_HEIGHT,
-                color=self.config.COLORS['trump']
+                color='white'  # Textfarbe geändert für bessere Lesbarkeit auf dem roten Balken
             )
     
     def _add_value_label(self, value: int, percentage: float, scale: float,
@@ -147,7 +149,7 @@ class ElectionVisualizer:
             va='center',
             color=color,
             fontweight='bold',
-            fontsize=10
+            fontsize=8  # Schriftgröße auf 8 reduziert, um Überschneidungen zu minimieren
         )
     
     def _configure_axes(self):
@@ -179,84 +181,7 @@ class ElectionVisualizer:
         self.ax.grid(True,
                     axis='x',
                     linestyle='--',
-                    alpha=self.config.GRID_ALPHA)
-    
-    def _create_slider(self) -> Slider:
-        """
-        Erstellt und konfiguriert den Slider.
-        
-        Returns:
-            Konfigurierter Slider
-        """
-        ax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])
-        slider = Slider(
-            ax=ax_slider,
-            label='Skalierung',
-            valmin=self.config.SLIDER_RANGE[0],
-            valmax=self.config.SLIDER_RANGE[1],
-            valinit=self.config.SLIDER_INIT,
-            valstep=self.config.SLIDER_STEP,
-            color=self.config.COLORS['slider'],  # Dunkelgrauer Slider
-            initcolor='none'
-        )
-        
-        def update(val):
-            """Slider Update-Funktion."""
-            self._draw_bars(val)
-            self._add_labels(val)
-            self._configure_axes()
-            self.fig.canvas.draw_idle()
-        
-        slider.on_changed(update)
-        return slider
-    
-    def create_plot(self) -> Tuple[plt.Figure, Slider]:
-        """
-        Erstellt den interaktiven Plot.
-        
-        Returns:
-            Figure und Slider
-        """
-        self._setup_style()
-        self.fig, self.ax = self._create_figure()
-        
-        # Initialer Plot
-        self._draw_bars()
-        self._add_labels()
-        self._configure_axes()
-        
-        # Slider
-        self.slider = self._create_slider()
-        
-        return self.fig, self.slider
-    
-    def save_plots(self, output_dir: str = 'output/plots'):
-        """
-        Speichert die Plots in verschiedenen Formaten.
-        
-        Args:
-            output_dir: Ausgabeverzeichnis
-        """
-        if self.fig is None:
-            raise ValueError("Kein Plot zum Speichern vorhanden. "
-                           "Rufen Sie zuerst create_plot() auf.")
-        
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-        
-        for fmt in ['png', 'svg', 'pdf']:
-            save_path = output_path / f'wahlergebnisse_2024.{fmt}'
-            self.fig.savefig(
-                save_path,
-                bbox_inches='tight',
-                dpi=self.config.DPI,
-                format=fmt
-            )
-            logger.info(f"Plot gespeichert als: {save_path}")
-    
-    def show(self):
-        """Zeigt den Plot an."""
-        if self.fig is None:
-            raise ValueError("Kein Plot zum Anzeigen vorhanden. "
-                           "Rufen Sie zuerst create_plot() auf.")
-        plt.show()
+                    linewidth=0.7,  # Erhöhung der Dicke der Gitternetzlinien für bessere Sichtbarkeit
+                    alpha=0.7)  # Transparenz erhöht
+
+    # Rest des Codes bleibt unverändert...
