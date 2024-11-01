@@ -138,7 +138,7 @@ Die Visualisierung erstellt interaktive Grafiken wie:
 - Vergleichsanalysen
 - Trenddarstellungen
 
-# ... (vorheriger Inhalt)
+
 
 ## ⭐ Stargazers
 
@@ -161,7 +161,7 @@ Thanks goes to these wonderful people:
   <img src="https://contrib.rocks/image?repo=ju1-eu/wahlergebnisse_visualization" />
 </a>
 
-# ... (restlicher Inhalt)
+
 
 ## 🤝 Beitragen
 
