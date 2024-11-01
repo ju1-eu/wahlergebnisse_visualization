@@ -1,0 +1,24 @@
+"""
+Entwicklungsabhängigkeiten.
+Installation: pip install -r dev-requirements.txt
+"""
+-r requirements.txt
+
+# Dokumentation
+sphinx
+sphinx-rtd-theme
+sphinx-autoapi
+
+# Code-Qualität
+pylint
+bandit
+safety
+
+# Testing
+pytest-mock
+pytest-asyncio
+pytest-xdist
+
+# Typ-Überprüfung
+types-setuptools
+types-requests
