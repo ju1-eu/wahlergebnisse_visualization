@@ -4,7 +4,7 @@ name: Update Stargazers
 on:
   schedule:
     - cron: '0 0 * * *'
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 jobs:
   update-stargazers:
@@ -44,6 +44,7 @@ jobs:
               });
 
               const badgeBase = 'https://img.shields.io/badge';
+              const repoPath = 'ju1-eu/wahlergebnisse_visualization';
               const badges = {
                 macos: `[![macOS](${badgeBase}/macOS-000000?style=` +
                   'for-the-badge&logo=apple&logoColor=white)]' +
@@ -53,25 +54,40 @@ jobs:
                   '(https://www.python.org)',
                 license: `[![License: MIT](${badgeBase}/` +
                   'License-MIT-yellow.svg?style=for-the-badge)]' +
-                  '(https://opensource.org/licenses/MIT)'
+                  '(https://opensource.org/licenses/MIT)',
+                ghstars: `[![GitHub stars](${badgeBase}/Stars-` +
+                  `${stargazers.length}-brightgreen.svg?` +
+                  'style=for-the-badge)]' +
+                  `(https://github.com/${repoPath}/stargazers)`
               };
 
               const content = [
                 '# ⭐ Stargazers\n',
-                '## Wahlergebnisse Visualization',
+                '## Wahlergebnisse Visualization\n',
+                'Interaktive Visualisierung der US-Wahlergebnisse 2024' +
+                ' mit erweiterten Analyse- und Exportfunktionen.\n',
                 badges.macos,
                 badges.python,
                 badges.license,
-                '',
-                'Thanks to all our stargazers! ✨\n',
+                badges.ghstars,
+                '\n## ✨ Unsere Unterstützer\n',
+                'Vielen Dank an alle unsere Stargazers! Diese tollen ' +
+                'Menschen haben Interesse an unserem Projekt gezeigt:\n',
                 stargazers
                   .map(user =>
                     `[![${user.login}](${user.avatar_url}&s=64)]` +
                     `(${user.html_url})`
                   )
                   .join(' '),
-                '',
-                `Last updated: ${date} (Europe/Berlin)`
+                '\n## 📊 Status\n',
+                `- **Aktuelle Stargazers**: ${stargazers.length}`,
+                `- **Letztes Update**: ${date} (Europe/Berlin)`,
+                '\n## 🤝 Mitwirken\n',
+                'Gefällt Ihnen das Projekt? Bitte geben Sie uns einen ' +
+                'Stern ⭐ und helfen Sie uns, es zu verbessern!\n',
+                `- [GitHub Repository](https://github.com/${repoPath})`,
+                `- [Issues melden](https://github.com/${repoPath}/issues)`,
+                `- [Pull Requests](https://github.com/${repoPath}/pulls)`
               ].join('\n');
 
               try {
@@ -96,18 +112,17 @@ jobs:
                 });
               } catch (error) {
                 if (error.status === 404) {
-                  await github.rest.repos
-                    .createOrUpdateFileContents({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      path: 'STARGAZERS.md',
-                      message: `Create Stargazers list [${date}]`,
-                      content: Buffer.from(content).toString('base64'),
-                      committer: {
-                        name: 'GitHub Action',
-                        email: 'action@github.com'
-                      }
-                    });
+                  await github.rest.repos.createOrUpdateFileContents({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    path: 'STARGAZERS.md',
+                    message: `Create Stargazers list [${date}]`,
+                    content: Buffer.from(content).toString('base64'),
+                    committer: {
+                      name: 'GitHub Action',
+                      email: 'action@github.com'
+                    }
+                  });
                 } else {
                   throw error;
                 }
