@@ -9,19 +9,19 @@ from setuptools import setup, find_packages
 
 # Kernabhängigkeiten
 REQUIREMENTS = [
-    "pandas",          # Datenverarbeitung
-    "matplotlib",      # Basis-Visualisierung
-    "seaborn",        # Erweiterte Visualisierung
-    "numpy"           # Numerische Berechnungen
+    "pandas",  # Datenverarbeitung
+    "matplotlib",  # Basis-Visualisierung
+    "seaborn",  # Erweiterte Visualisierung
+    "numpy",  # Numerische Berechnungen
 ]
 
 # Entwicklungsabhängigkeiten
 DEV_REQUIREMENTS = [
-    "pytest",         # Testing Framework
-    "pytest-cov",     # Test Coverage
-    "black",          # Code Formatierung
-    "flake8",         # Linting
-    "mypy"           # Statische Typ-Überprüfung
+    "pytest",  # Testing Framework
+    "pytest-cov",  # Test Coverage
+    "black",  # Code Formatierung
+    "flake8",  # Linting
+    "mypy",  # Statische Typ-Überprüfung
 ]
 
 # Lese README.md
@@ -51,7 +51,7 @@ setup(
         "election",
         "data analysis",
         "interactive plotting",
-        "political data"
+        "political data",
     ],
     python_requires=">=3.11",
     license="MIT",
@@ -66,13 +66,12 @@ setup(
         "Programming Language :: Python :: 3.13",
         "Topic :: Scientific/Engineering :: Visualization",
         "Topic :: Scientific/Engineering :: Information Analysis",
-    ]
+    ],
 )
 
 # requirements.txt
 """
 Kernabhängigkeiten für das Wahlergebnisse-Visualisierungsprojekt.
-"""
 
 # Kernabhängigkeiten
 pandas
@@ -82,22 +81,21 @@ numpy
 
 # Entwicklungsabhängigkeiten
 pytest
-pytest-cov
+pytest - cov
 black
 flake8
 mypy
+"""
 
 # dev-requirements.txt
 """
 Entwicklungsabhängigkeiten.
 Installation: pip install -r dev-requirements.txt
-"""
--r requirements.txt
 
 # Dokumentation
 sphinx
-sphinx-rtd-theme
-sphinx-autoapi
+sphinx - rtd - theme
+sphinx - autoapi
 
 # Code-Qualität
 pylint
@@ -105,10 +103,11 @@ bandit
 safety
 
 # Testing
-pytest-mock
-pytest-asyncio
-pytest-xdist
+pytest - mock
+pytest - asyncio
+pytest - xdist
 
 # Typ-Überprüfung
-types-setuptools
-types-requests
+types - setuptools
+types - requests
+"""

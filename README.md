@@ -137,7 +137,7 @@ python main.py --clear-cache
    black .
 
    # Linting
-   flake8
+   flake8 --max-line-length=100 *.py
 
    # Typ-Überprüfung
    mypy src/
