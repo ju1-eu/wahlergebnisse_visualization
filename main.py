@@ -1,5 +1,6 @@
-"""US-Wahlergebnisse Visualisierung 2024
-------------------------------------
+"""
+US-Wahlergebnisse Visualisierung 2024
+-------------------------------------
 Dieses Skript visualisiert die Wahlergebnisse der US-Wahl 2024 für Harris und Trump.
 Es bietet eine interaktive Darstellung mit Skalierungsmöglichkeit und automatischem Export.
 

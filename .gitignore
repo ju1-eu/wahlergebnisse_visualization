@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
 .Python
 env/
 build/
@@ -31,11 +32,15 @@ ENV/
 
 # Project specific
 .cache/
-output/
+output/*
+!output/.gitkeep
 logs/
+*.log
+.env
 
-test.md
+# Temporary and backup files
 *.~
 .*~
-*.old.secrets
+*.old
 .secrets
+*.secrets

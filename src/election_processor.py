@@ -8,7 +8,6 @@ import re
 import logging
 import pickle
 from pathlib import Path
-from functools import lru_cache
 from typing import Optional, Dict, Any
 from .config import CacheConfig
 

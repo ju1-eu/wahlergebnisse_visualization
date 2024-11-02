@@ -60,7 +60,7 @@ Beispiele:
         io_group.add_argument(
             "-i",
             "--input",
-            default="Wahlergebnisse2024-Harris-vs-Trump.txt",
+            default="data/wahl2024-harris-vs-trump.txt",
             help="Pfad zur Eingabedatei (Standard: %(default)s)",
         )
         io_group.add_argument(
